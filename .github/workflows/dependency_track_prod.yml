@@ -1,0 +1,35 @@
+name: DEV - DTrack
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/dependency_track_prod.yml"
+      - "iam_sdk/**"
+      - "poetry.lock"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  dependency_track_rust:
+    name: Deploy artifact to Dependency Track - Rust
+    uses: totvscloud-seginf/shared-workflows/.github/workflows/dependency-track.yml@v1.2.16
+    secrets:
+      dtrack_x_api_key: ${{ secrets.DTRACK_X_API_KEY_PROD }}
+    with:
+      project_id: 4b918c25-8981-497f-ad0f-5d705dede9d1
+
+  dependency_track_python:
+    name: Deploy artifact to Dependency Track - Python
+    uses: totvscloud-seginf/shared-workflows/.github/workflows/dependency-track.yml@v1.2.16
+    secrets:
+      dtrack_x_api_key: ${{ secrets.DTRACK_X_API_KEY_PROD }}
+    with:
+      project_id: dd93ff09-37bb-49fd-9044-280490ae1e50
+      scan_ref: cedarpy-conversor:latest
+      container_name: cedarpy-conversor:latest
+      scan_type: image
+      build_container: true
+      container_file: Dockerfile
